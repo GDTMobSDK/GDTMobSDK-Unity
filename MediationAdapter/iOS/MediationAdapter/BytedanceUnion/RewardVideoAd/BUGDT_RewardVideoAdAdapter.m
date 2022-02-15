@@ -82,6 +82,35 @@
     return self.delegateObject.loadedTime + 1800;
 }
 
+- (NSInteger)eCPM {
+    if ([self.rewardVideoAd.mediaExt objectForKey:@"price"]) {
+        return [[self.rewardVideoAd.mediaExt objectForKey:@"price"] integerValue];
+    }
+    
+    return -1;
+}
 
+- (NSDictionary *)extraInfo {
+    NSMutableDictionary *res = [NSMutableDictionary dictionary];
+    if ([self.rewardVideoAd.mediaExt objectForKey:@"request_id"]) {
+        [res setObject:[self.rewardVideoAd.mediaExt objectForKey:@"request_id"] forKey:GDT_REQ_ID_KEY];
+    }
+    return [res copy];
+}
+
+//发送竞胜结果
+- (void)sendWinNotification:(NSInteger)price {
+    [self.rewardVideoAd win:@(price)];
+}
+
+//发送竞败结果
+- (void)sendLossNotification:(NSInteger)price reason:(NSInteger)reason adnId:(NSString *)adnId {
+    [self.rewardVideoAd loss:@(price) lossReason:[NSString stringWithFormat:@"%ld", (long)reason] winBidder:adnId];
+}
+
+//设置实际结算价
+- (void)setBidECPM:(NSInteger)price {
+    [self.rewardVideoAd setPrice:@(price)];
+}
 
 @end

@@ -66,6 +66,29 @@
     [self.gdtBannerView addSubview:self.buBannerView];
 }
 
+- (NSInteger)eCPM {
+    if ([self.buBannerView.mediaExt objectForKey:@"price"]) {
+        return [[self.buBannerView.mediaExt objectForKey:@"price"] integerValue];
+    }
+    
+    return -1;
+}
+
+//发送竞胜结果
+- (void)sendWinNotification:(NSInteger)price {
+    [self.buBannerView win:@(price)];
+}
+
+//发送竞败结果
+- (void)sendLossNotification:(NSInteger)price reason:(NSInteger)reason adnId:(NSString *)adnId {
+    [self.buBannerView loss:@(price) lossReason:[NSString stringWithFormat:@"%ld", (long)reason] winBidder:adnId];
+}
+
+//设置实际结算价
+- (void)setBidECPM:(NSInteger)price {
+    [self.buBannerView setPrice:@(price)];
+}
+
 #pragma mark - BUNativeExpressBannerViewDelegate
 
 - (void)nativeExpressBannerAdViewDidLoad:(BUNativeExpressBannerView *)bannerAdView {
@@ -115,6 +138,14 @@
         [self.connector adapter_unifiedBannerViewWillClose:self];
     }
     [self.gdtBannerView removeFromSuperview];
+}
+
+- (NSDictionary *)extraInfo {
+    NSMutableDictionary *res = [NSMutableDictionary dictionary];
+    if ([self.buBannerView.mediaExt objectForKey:@"request_id"]) {
+        [res setObject:[self.buBannerView.mediaExt objectForKey:@"request_id"] forKey:GDT_REQ_ID_KEY];
+    }
+    return [res copy];
 }
 
 

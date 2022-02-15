@@ -59,7 +59,7 @@
     
     KSRewardedVideoModel *model = [[KSRewardedVideoModel alloc] init];
     model.userId = self.serverSideVerificationOptions.userIdentifier;
-    
+    model.extra = self.serverSideVerificationOptions.customRewardString;
     self.rewardVideoAd = [[KSRewardedVideoAd alloc] initWithPosId:self.posId rewardedVideoModel:model];
     self.rewardVideoAd.delegate = self.delegateObject;
     [self.rewardVideoAd loadAdData];
@@ -83,10 +83,17 @@
 }
 
 - (NSInteger)eCPM {
-    NSLog(@"kuaishou 价格 --> %@", @(self.rewardVideoAd.ecpm));
     return self.rewardVideoAd.ecpm;
 }
 
+//发送竞败结果
+- (void)sendLossNotification:(NSInteger)price reason:(NSInteger)reason adnId:(NSString *)adnId {
+    [self.rewardVideoAd reportAdExposureFailed:0 reportParam:nil];
+}
 
+//设置实际结算价
+- (void)setBidECPM:(NSInteger)price {
+    [self.rewardVideoAd setBidEcpm:price];
+}
 
 @end

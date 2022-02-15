@@ -114,8 +114,11 @@
     }
 }
 
-- (NSInteger)eCPM
-{
+- (NSInteger)eCPM {
+    if ([self.nativeAd.data.mediaExt objectForKey:@"price"]) {
+        return [[self.nativeAd.data.mediaExt objectForKey:@"price"] integerValue];
+    }
+    
     return -1;
 }
 
@@ -172,6 +175,14 @@
     return self.nativeAd.rootViewController;
 }
 
+- (void)sendWinNotification:(NSInteger)price {
+    [self.nativeAd win:@(price)];
+}
+
+- (void)sendLossNotification:(NSInteger)price reason:(NSInteger)reason adnId:(NSString *)adnId {
+    [self.nativeAd loss:@(price) lossReason:[NSString stringWithFormat:@"%ld", reason] winBidder:adnId];
+}
+
 #pragma mark - GDTMediaViewAdapterProtocol
 /**
  * 视频广告时长，单位 ms
@@ -194,7 +205,7 @@
  */
 - (void)play
 {
-//    [self.relatedView.videoAdView tapPlay];
+    [self.relatedView.videoAdView play];
 }
 
 /**
@@ -202,7 +213,7 @@
  */
 - (void)pause
 {
-//    [self.relatedView.videoAdView tapPause];
+    [self.relatedView.videoAdView pause];
 }
 
 /**
@@ -210,7 +221,6 @@
  */
 - (void)stop
 {
-    [self.relatedView.videoAdView playerSeekToTime:0];
 }
 
 /**
